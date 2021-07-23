@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 type UserType = {
   avatar: string;
@@ -21,24 +22,22 @@ export default function Example() {
     totalPage: 1
   });
   const [users, setUsers] = useState<UsersType>();
-  const [target, setTarget] = useState<Element | null>(null);
 
-  const handleIntersect = useCallback(
-    ([entry]: IntersectionObserverEntry[]) => {
-      if (entry.isIntersecting) {
-        setPageInfo((prev) => {
-          if (prev.totalPage > prev.page) {
-            return {
-              ...prev,
-              page: prev.page + 1
-            };
-          }
-          return prev;
-        });
+  const handleIntersect = useCallback(() => {
+    setPageInfo((prev) => {
+      if (prev.totalPage > prev.page) {
+        return {
+          ...prev,
+          page: prev.page + 1
+        };
       }
-    },
-    []
-  );
+      return prev;
+    });
+  }, []);
+
+  const [setTarget] = useInfiniteScroll(handleIntersect, {
+    threshold: 0
+  });
 
   useEffect(() => {
     const instance = axios.get<UsersType>(
@@ -63,19 +62,6 @@ export default function Example() {
       }
     });
   }, [pageInfo.page]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleIntersect, {
-      threshold: 0,
-      root: null
-    });
-
-    target && observer.observe(target);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [handleIntersect, target]);
 
   return (
     <div>

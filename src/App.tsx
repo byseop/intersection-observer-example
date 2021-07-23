@@ -1,10 +1,10 @@
 import './App.css';
-import Example from './components/Example';
+import ExampleWithHook from './components/Example';
 
 function App() {
   return (
     <div className="App">
-      <Example />
+      <ExampleWithHook />
     </div>
   );
 }
