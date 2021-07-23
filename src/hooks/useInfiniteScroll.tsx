@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 export default function useInfiniteScroll(
   onIntersect: () => void,
-  options?: Omit<IntersectionObserverInit, 'root'>
+  options?: IntersectionObserverInit
 ) {
   const [target, setTarget] = useState<Element | null>(null);
 
